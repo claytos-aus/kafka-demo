@@ -1,5 +1,6 @@
 package com.example.kafkademo;
 
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -25,8 +26,15 @@ public class PublisherRunner implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		user = new User("test user", 3, "blue");
 		kafkaTemplate.send(topic,user).addCallback(
-			result -> log.info("sent data"), 
-			exception -> log.error("error occurred"));
+			result -> {
+				final RecordMetadata m = result.getRecordMetadata();
+				log.info("sent data to topic [{}] partition [{}] @offset [{}]",
+					m.topic(),
+					m.partition(),
+					m.offset());
+			}, 
+			exception -> log.error("error occurred: ",exception)
+			);
 	}
 
 }
