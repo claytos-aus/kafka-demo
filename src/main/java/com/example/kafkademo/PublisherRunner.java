@@ -1,5 +1,7 @@
 package com.example.kafkademo;
 
+import java.util.Random;
+
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +26,8 @@ public class PublisherRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		user = new User("test user", 3, "blue");
+		Random rand = new Random();
+		user = new User("test user", rand.nextInt(10) , "blue");
 		kafkaTemplate.send(topic,user).addCallback(
 			result -> {
 				final RecordMetadata m = result.getRecordMetadata();
