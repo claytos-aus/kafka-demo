@@ -1,6 +1,7 @@
 package com.example.kafkademo;
 
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PublisherRunner implements CommandLineRunner {
+public class KafkaPublisher implements CommandLineRunner {
 	
 	@Autowired
 	private KafkaTemplate<String,User> kafkaTemplate;
@@ -26,18 +27,19 @@ public class PublisherRunner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Random rand = new Random();
-		user = new User("test user", rand.nextInt(10) , "blue");
-		kafkaTemplate.send(topic,user).addCallback(
-			result -> {
-				final RecordMetadata m = result.getRecordMetadata();
-				log.info("sent data to topic [{}] partition [{}] @offset [{}]",
-					m.topic(),
-					m.partition(),
-					m.offset());
-			}, 
-			exception -> log.error("error occurred: ",exception)
-			);
+		IntStream.range(0, 10).forEach(action -> {
+			user = new User("test user", action , "blue");
+			kafkaTemplate.send(topic,user).addCallback(
+				result -> {
+					final RecordMetadata m = result.getRecordMetadata();
+					log.info("sent data to topic [{}] partition [{}] @offset [{}]",
+						m.topic(),
+						m.partition(),
+						m.offset());
+				}, 
+				exception -> log.error("error occurred: ",exception)
+				);
+		});
 	}
 
 }
