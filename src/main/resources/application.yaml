@@ -1,6 +1,6 @@
 spring:
     kafka:
-        bootstrap-servers: localhost:29092
+        bootstrap-servers: localhost:9092,localhost:9093
         consumer:
             auto-offset-reset: earliest
             value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
@@ -11,8 +11,10 @@ spring:
         ssl:
             protocol:
         properties:
-            schema.registry.url: http://localhost:28081
+            schema.registry.url: http://localhost:8081
 
 
 kafka:
     topic: test
+    partitions: 2
+    replicas: 2
