@@ -1,6 +1,5 @@
 package com.example.kafkademo;
 
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
